@@ -1,0 +1,95 @@
+<html>
+<head>
+<title>Antigate Tester</title>
+<script src="http://js-multipart-data.googlecode.com/files/multipartData.js"></script>
+
+</head>
+<body>
+<input type="button" id="utest" value="upload test" width="200"/>
+<input type="button" id="rtest" value='"recognize" test' width="50"/>
+<hr/>
+<textarea id="uResults"></textarea>
+<textarea id="rResults"></textarea>
+<script>
+var xhr=new XMLHttpRequest();
+var params= new multipartData();
+var uresults=document.getElementById("uResults");
+var rresults=document.getElementById("rResults");
+var counter=1;
+var key="aff2";
+var captchas=[];
+function testUploading(){
+	xhr.open('POST',"in.php",false);
+	params.clear();
+	
+	params.addDataField("key",key);
+	params.addDataField("method","post");
+	params.addDataField("phrase ","1");
+	params.addDataField("regsense","1");
+	params.addDataField("file","testImage",("captcha"+counter+".png"),"image/png");
+	params.prepareXHRObject(xhr);
+	xhr.sendAsBinary(params.data);
+	var answ=xhr.responseText;
+	uresults.innerHTML+=answ+"\n";
+	
+	var pos=answ.indexOf("OK|");
+	
+	if(pos>-1){
+		console.log(Number(answ.substr(pos+3)),answ.substr(pos+3),pos,answ);
+		captchas[Number(answ.substr(pos+3))]=counter;
+	}else{
+		switch(answ){
+			case "ERROR_KEY_DOES_NOT_EXIST":
+				alert("THIS ACCOUNT KEY DOESNT EXISTS");
+			break;
+			case "ERROR_NO_SLOT_AVAILABLE":
+			break;
+			case "ERROR_IP_NOT_ALLOWED":
+				alert("Access only from some ips");
+			break;
+			default:
+				alert("ERROR:\n"+answ);
+				
+			break;
+		}
+	}
+	counter++;
+}
+function testGetting(){
+	var str="";
+	for (var id in captchas){
+		console.log(id);
+		str+=id+",";
+	}
+	xhr.open('GET',"res.php?key="+key+"&action=get&ids="+str,false);
+	xhr.send();
+	var answers=xhr.responseText.split("|");
+	var i=0;
+	for (var id in captchas){
+		switch(answers[i]){
+			case "ERROR_WRONG_ID_FORMAT":
+			case "ERROR_URL_METHOD_FORBIDDEN":
+			case "ERROR_KEY_DOES_NOT_EXIST":
+				stopPrerecodnition();
+			break;
+			
+			case "ERROR_NO_SUCH_CAPCHA_ID":
+				delete captchas[id];
+			break;
+			case "CAPCHA_NOT_READY":
+			break;
+			default:
+				rresults.innerHTML+="Captcha :"+id+"recognized as"+answers[i]+"\n";
+				delete captchas[id];
+		}
+		i++;
+	}
+
+}
+
+document.getElementById("utest").addEventListener("click",testUploading,false);
+document.getElementById("rtest").addEventListener("click",testGetting,false);
+</script>
+
+</body>
+<html>
