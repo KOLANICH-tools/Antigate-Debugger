@@ -7,6 +7,8 @@
 <body>
 <input type="button" id="utest" value="upload test" width="200"/>
 <input type="button" id="rtest" value='"recognize" test' width="50"/>
+<input type="button" id="clear" value='clear' width="50"/>
+
 <hr/>
 <textarea id="uResults"></textarea>
 <textarea id="rResults"></textarea>
@@ -86,9 +88,16 @@ function testGetting(){
 	}
 
 }
+function clear(){
+	xhr.open('GET',"res.php?action=clear",false);
+	xhr.send();
+	rresults.innerHTML=uresults.innerHTML="";
+	captchas=[];
+}
 
 document.getElementById("utest").addEventListener("click",testUploading,false);
 document.getElementById("rtest").addEventListener("click",testGetting,false);
+document.getElementById("clear").addEventListener("click",clear,false);
 </script>
 
 </body>

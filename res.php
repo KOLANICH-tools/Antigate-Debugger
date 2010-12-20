@@ -8,11 +8,17 @@ $key=$_REQUEST["key"];
 $key=hexdec($key);
 $id=$_REQUEST["id"];
 $ids=$_REQUEST["ids"];
+
+session_start();
+if($action=="clear"){
+	session_destroy();
+	die("cleared");
+}
 if(empty($key)||empty($action)||(empty($id)&&empty($ids)) ){
 	die("PARAMETER_MISSED");
 }
 if($key%2)die("ERROR_KEY_DOES_NOT_EXIST");
-session_start();
+
 
 //new dBug($_SESSION);
 
@@ -42,9 +48,6 @@ switch($action){
 			echo(getCaptcha($id,1));
 			
 		}
-	break;
-	case "clear":
-		session_destroy();
 	break;
 }
 
