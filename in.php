@@ -3,7 +3,7 @@ $method=$_REQUEST["method"];
 $key=$_REQUEST["key"];
 $key=hexdec($key); 
 $file=$_FILES["file"];
-if(empty($key)||empty($method)||empty($file)){
+if(empty($key)||empty($method)||(empty($file)&&empty(body))){
 	die("PARAMETER_MISSED");
 }
 if($key%2)die("ERROR_KEY_DOES_NOT_EXIST");
