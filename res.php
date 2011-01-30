@@ -49,6 +49,9 @@ switch($action){
 			
 		}
 	break;
+	case "getBalance":
+		die(rand()*1000);
+	break;
 }
 
 
